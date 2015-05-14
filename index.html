@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html ng-app="orionMapping">
+<head>
+    
+
+    <title>OSM Example</title>
+
+    <!--Frameworks for the map-->
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="http://leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-leaflet-directive.min.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="js/angular-cookies.min.js"></script>
+    <script src="js/leaflet.activearea.js"></script>
+    <script src="js/L.Control.ZoomBox.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="js/ui-bootstrap-tpls-0.12.0.min.js"></script>
+
+
+    <script src="js/bootstrap.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/Leaflet.MakiMarkers.js"></script>
+
+
+ 
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+    <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css"/>
+    <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"/>
+    <link href="css/orionmap.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.css.map" rel="stylesheet">
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap.css.map" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/cover.css" rel="stylesheet">
+
+    <link href="css/L.Control.ZoomBox.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+
+
+
+   
+</head>
+
+<body ng-controller="MappingController">
+
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '404635733051877',
+      xfbml      : true,
+      version    : 'v2.3'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+
+
+  <div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+         <div class="masthead clearfix">
+            <div class="inner">
+              <h3 class="masthead-brand"> Example of OSM </h3>
+              <nav>
+                <ul class="nav masthead-nav">
+                  <li class="active"><a href="#">Home</a></li>
+                  <li><a href="https://www.elance.com/s/evgenua/">Contact</a></li>
+
+                </ul>
+              </nav>
+            </div>
+          </div>
+
+
+        <div style="margin-left: 185px;">
+            <input type="number" class="form-control" placeholder="lat" 
+                    style="width: 200px; float: left; margin-right: 10px" aria-describedby="basic-addon1" step="any" ng-model="center.lat" required>
+            
+            <input type="number" class="form-control" placeholder="lat" 
+                    style="width: 200px; float: left; margin-right: 10px" aria-describedby="basic-addon1" step="any" ng-model="center.lng" required>
+           
+            <input type="number" class="form-control" placeholder="lat" 
+                    style="width: 200px; float: left;" aria-describedby="basic-addon1" step="any" ng-model="center.zoom" min="0" max="18" integer>
+
+           
+
+        </div>
+
+
+<br/>
+<br/>
+
+        <div class="panel panel-default">
+            <div class="panel-heading" style="text-align: right">
+                <a href="#" ng-click="zoomIn()"><i class="glyphicon glyphicon-zoom-in"></i></a>
+                <a href="#" ng-click="zoomOut()"><i class="glyphicon glyphicon-zoom-out"></i></a>
+                <a href="#" ng-click="showLeaflet()"><i class="glyphicon glyphicon-screenshot"></i></i></a>
+                <a href="#" ng-click="fitbounds()"><i class="glyphicon glyphicon-unchecked"></i></a>
+                <a href="#" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="glyphicon glyphicon-wrench"></i></a>
+
+                <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span
+                                        aria-hidden="true">&times;</span><span
+                                        class="sr-only">Close</span></button>
+                                <h4 class="modal-title">Setting of the map</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label">Lat</label>
+
+                                        <div class="col-lg-10">
+                                            <input type="number" placeholder="lat"
+                                                   class="form-control" step="any" ng-model="center.lat" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label">Lng</label>
+
+                                        <div class="col-lg-10">
+                                            <input type="number" placeholder="lon"
+                                                   class="form-control" step="any" ng-model="center.lng">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label">Zoom</label>
+
+                                        <div class="col-lg-10">
+                                            <input type="number" placeholder="zoom"
+                                                   class="form-control" step="any" ng-model="center.zoom" min="0" max="18" integer>
+                                        </div>
+                                    </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                                    <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" ng-click="update(center)">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="panel-body">
+               <leaflet center="center" layers="layers"
+                             markers="markers" watch-markers="no" event-broadcast="events"
+                             style="height:300px;">
+                </leaflet>
+            </div>
+        </div>
+                
+
+ 
+
+          <div class="mastfoot">
+            <div class="inner">
+              2015  <a href="https://www.elance.com/s/evgenua/" target="blank" > Rudenko Evgen </a>  <div class="fb-like" data-share="true" data-width="450" data-show-faces="true"></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+                     
+
+
+<!-- end: JavaScript-->
+
+<!--Custom pop-Up style -->
+<style>
+.leaflet-popup {
+    position: absolute;
+    text-align: center;
+}
+
+.leaflet-popup-content-wrapper {
+    padding: 1px;
+    text-align: left;
+    border-radius: 3px;
+}
+
+.leaflet-popup-content {
+    margin: 13px 19px;
+    line-height: 1.4;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    height: 300px;
+    width: 300px;
+    color: #1f1f1f;
+}
+
+.leaflet-popup-content p {
+    margin: 18px 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.leaflet-popup-tip-container {
+    margin: 0 auto;
+    width: 40px;
+    height: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.leaflet-popup-tip {
+    width: 17px;
+    height: 17px;
+    padding: 1px;
+
+    margin: -10px auto 0;
+
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+    background-color: #e3e4e5;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1060;
+    display: none;
+    max-width: 276px;
+    padding: 1px;
+
+    line-height: 1.42857143;
+    text-align: left;
+    white-space: normal;
+
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, .2);
+    border-radius: 6px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+}
+</style>
+
+
+</div>      
+
+</body>
+</html>
